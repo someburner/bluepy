@@ -872,7 +872,11 @@ class Scanner(BluepyHelper):
                     self.scanned[addr] = dev
                 isNewData = dev._update(resp)
                 if self.delegate is not None:
-                    self.delegate.handleDiscovery(dev, (dev.updateCount <= 1), isNewData)
+                    stop = self.delegate.handleDiscovery(dev, (dev.updateCount <= 1), isNewData)
+                    if stop:
+                        break
+                    else:
+                        del self.scanned[addr]
 
             else:
                 raise BTLEInternalError("Unexpected response: " + respType, resp)
